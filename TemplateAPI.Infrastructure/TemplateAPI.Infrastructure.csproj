@@ -10,4 +10,10 @@
       <ProjectReference Include="..\TemplateAPI.Application\TemplateAPI.Application.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Context\Configuration\" />
+      <Folder Include="Helpers\" />
+      <Folder Include="Repositories\" />
+    </ItemGroup>
+
 </Project>
