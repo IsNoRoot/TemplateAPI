@@ -10,4 +10,12 @@
       <ProjectReference Include="..\TemplateAPI.Domain\TemplateAPI.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Constants\" />
+      <Folder Include="DTOs\" />
+      <Folder Include="Exceptions\" />
+      <Folder Include="Helpers\" />
+      <Folder Include="Services\Interfaces\" />
+    </ItemGroup>
+
 </Project>
