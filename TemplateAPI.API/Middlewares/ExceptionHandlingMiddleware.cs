@@ -1,5 +1,8 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using TemplateAPI.Application.Constants;
 using TemplateAPI.Application.Exceptions;
 
 namespace TemplateAPI.API.Middlewares;
@@ -31,7 +34,7 @@ public class ExceptionHandlingMiddleware
     private async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/problem+json"; // El ContentType estándar
-        
+
         // Crea una instancia de ProblemDetails
         var problemDetails = new ProblemDetails();
 
@@ -44,7 +47,7 @@ public class ExceptionHandlingMiddleware
                 problemDetails.Status = StatusCodes.Status404NotFound;
                 problemDetails.Detail = ex.Message;
                 break;
-            
+
             case ValidationException ex:
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4";
@@ -52,7 +55,7 @@ public class ExceptionHandlingMiddleware
                 problemDetails.Status = StatusCodes.Status400BadRequest;
                 problemDetails.Detail = ex.Message;
                 break;
-            
+
             case UnprocessableEntityException ex:
                 context.Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
                 problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4";
@@ -60,7 +63,31 @@ public class ExceptionHandlingMiddleware
                 problemDetails.Status = StatusCodes.Status422UnprocessableEntity;
                 problemDetails.Detail = ex.Message;
                 break;
-            
+
+            case ConflictException ex:
+                context.Response.StatusCode = StatusCodes.Status409Conflict;
+                problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4";
+                problemDetails.Title = "Conflicto de estado.";
+                problemDetails.Status = StatusCodes.Status409Conflict;
+                problemDetails.Detail = ex.Message;
+                break;
+            case DbUpdateException ex:
+
+                if (ex.GetBaseException() is not SqlException sqlException) return;
+                switch (sqlException.Number)
+                {
+                    case 2627:
+                    case 2601:
+                        context.Response.StatusCode = StatusCodes.Status409Conflict;
+                        problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4";
+                        problemDetails.Title = "Conflicto de estado.";
+                        problemDetails.Status = StatusCodes.Status409Conflict;
+                        problemDetails.Detail = sqlException.Message;
+                        break;
+                }
+
+                break;
+
             case { } ex:
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4";

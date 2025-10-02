@@ -5,18 +5,11 @@ using TemplateAPI.Domain.Repositories;
 
 namespace TemplateAPI.Application.Services;
 
-public class UserSearcherService : IUserSearcherService
+public class UserSearcherService(IUserRepository userRepository) : IUserSearcherService
 {
-    private readonly IUserRepository _userRepository;
-
-    public UserSearcherService(IUserRepository userRepository)
-    {
-        _userRepository = userRepository;
-    }
-
     public async Task<ResultDto<IEnumerable<UserResponseDto>>> SearchAsync()
     {
-        var response = await _userRepository.GetAsync();
+        var response = await userRepository.GetAsync();
 
         var data = response.Select<UserEntity, UserResponseDto>(user =>
         {

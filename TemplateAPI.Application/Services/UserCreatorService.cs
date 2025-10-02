@@ -8,17 +8,8 @@ using TemplateAPI.Domain.Repositories;
 
 namespace TemplateAPI.Application.Services;
 
-public class UserCreatorService : IUserCreatorService
+public class UserCreatorService(IUserRepository userRepository, IUnitOfWork unitOfWork) : IUserCreatorService
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public UserCreatorService(IUserRepository userRepository, IUnitOfWork unitOfWork)
-    {
-        _userRepository = userRepository;
-        _unitOfWork = unitOfWork;
-    }
-
     public async Task<ResultDto<UserCreateResponseDto>> CreateAsync(UserCreateRequestDto user)
     {
         try
@@ -26,8 +17,8 @@ public class UserCreatorService : IUserCreatorService
             var userToCreate = new UserEntity(user.Name, user.FirstName, user.LastName, user.Age, user.Email,
                 user.UserName, user.Password);
 
-            await _userRepository.AddAsync(userToCreate);
-            await _unitOfWork.SaveChangesAsync();
+            await userRepository.AddAsync(userToCreate);
+            await unitOfWork.SaveChangesAsync();
 
             var data = new UserCreateResponseDto()
             {
@@ -43,9 +34,9 @@ public class UserCreatorService : IUserCreatorService
 
             return new ResultDto<UserCreateResponseDto>().Success(data);
         }
-        catch (DomainException ex)
+        catch (DomainException e)
         {
-            throw new ValidationException(ex.Message);
+            throw new UnprocessableEntityException(e.Message);
         }
     }
 }

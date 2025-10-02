@@ -1,18 +1,20 @@
+using TemplateAPI.Application.Constants;
+
 namespace TemplateAPI.Application.DTOs;
 
 public class ResultDto<T>
 {
-    private const string SuccessMessage = "Operación exitosa";
+    private const string OperationSuccessful = SuccessMessages.OperationSuccessful;
     public T? Data { get; set; }
     public bool IsSuccess { get; set; }
-    public string Message { get; set; } = SuccessMessage;
+    public string Message { get; set; } = OperationSuccessful;
 
     public  ResultDto<T> Success()
     {
         return new ResultDto<T>()
         {
             Data = default(T),
-            Message = SuccessMessage,
+            Message = OperationSuccessful,
             IsSuccess = true
         };
     }
@@ -22,7 +24,7 @@ public class ResultDto<T>
         return new ResultDto<T>()
         {
             Data = data,
-            Message = SuccessMessage,
+            Message = OperationSuccessful,
             IsSuccess = true
         };
     }

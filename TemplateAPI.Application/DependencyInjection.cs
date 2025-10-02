@@ -11,6 +11,7 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.AddScoped<TokenService>();
+        services.AddTransient<IUserAuthenticatorService, UserAuthenticatorService>();
         services.AddTransient<IUserCreatorService, UserCreatorService>();
         services.AddTransient<IUserUpdaterService, UserUpdaterService>();
         services.AddTransient<IUserDeleterService, UserDeleterService>();

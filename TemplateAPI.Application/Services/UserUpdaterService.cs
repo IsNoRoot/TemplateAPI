@@ -1,3 +1,4 @@
+using TemplateAPI.Application.Constants;
 using TemplateAPI.Application.Contracts;
 using TemplateAPI.Application.DTOs;
 using TemplateAPI.Application.Exceptions;
@@ -8,26 +9,17 @@ using TemplateAPI.Domain.Repositories;
 
 namespace TemplateAPI.Application.Services;
 
-public class UserUpdaterService : IUserUpdaterService
+public class UserUpdaterService(IUserRepository userRepository, IUnitOfWork unitOfWork) : IUserUpdaterService
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public UserUpdaterService(IUserRepository userRepository, IUnitOfWork unitOfWork)
-    {
-        _userRepository = userRepository;
-        _unitOfWork = unitOfWork;
-    }
-
     public async Task<ResultDto<object>> UpdateAsync(UserUpdateRequestDto user)
     {
         try
         {
-            var userDb = await _userRepository.GetByIdAsync(user.Id);
+            var userDb = await userRepository.GetByIdAsync(user.Id);
 
             if (userDb is null)
             {
-                throw new NotFoundException("El usuario a actualizar no fue encontrado");
+                throw new NotFoundException(ErrorMessages.UserUpdateNotFound);
             }
 
             var userToUpdate = new UserEntity(user.Name,
@@ -40,14 +32,14 @@ public class UserUpdaterService : IUserUpdaterService
                 user.Id
             );
 
-            await _userRepository.UpdateAsync(userToUpdate);
-            await _unitOfWork.SaveChangesAsync();
+            await userRepository.UpdateAsync(userToUpdate);
+            await unitOfWork.SaveChangesAsync();
 
             return new ResultDto<object>().Success();
         }
         catch (DomainException e)
         {
-            throw new ValidationException(e.Message);
+            throw new UnprocessableEntityException(e.Message);
         }
     }
 }

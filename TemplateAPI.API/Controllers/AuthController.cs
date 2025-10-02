@@ -6,18 +6,12 @@ namespace TemplateAPI.API.Controllers;
 
 [ApiController]
 [Route("auth")]
-public class AuthController : Controller
+public class AuthController(IUserAuthenticatorService userAuthenticatorService) : ControllerBase
 {
-    private readonly IUserAuthenticatorService _userAuthenticatorService;
-
-    public AuthController(IUserAuthenticatorService userAuthenticatorService)
-    {
-        _userAuthenticatorService = userAuthenticatorService;
-    }
     [HttpPost]
-    public async Task<IActionResult> LogIn([FromBody]CredentialsRequestDto credentials)
+    public async Task<IActionResult> LogIn([FromBody] CredentialsRequestDto credentials)
     {
-        var response=await _userAuthenticatorService.LogIn(credentials);
-        return Ok(response);
+        var response = await userAuthenticatorService.LogIn(credentials);
+        return Ok(new {token=response});
     }
 }
