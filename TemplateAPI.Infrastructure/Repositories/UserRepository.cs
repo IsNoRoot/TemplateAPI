@@ -1,10 +1,12 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using TemplateAPI.Application.Constants;
+using TemplateAPI.Application.DTOs;
 using TemplateAPI.Application.Exceptions;
 using TemplateAPI.Domain.Entities;
 using TemplateAPI.Domain.Repositories;
 using TemplateAPI.Infrastructure.Context;
+using TemplateAPI.Infrastructure.Extensions;
 
 namespace TemplateAPI.Infrastructure.Repositories;
 
@@ -42,6 +44,13 @@ public class UserRepository(ApplicationDbContext dbContext) : IUserRepository
     {
         return await dbContext.Users.ToListAsync();
     }
+
+    public async Task<(IEnumerable<UserEntity> Data, int TotalItems)> GetAsync(int pageNumber, int pageSize)
+    {
+        var response = await dbContext.Users.ToPagedListAsync(pageNumber, pageSize);
+        return response;
+    }
+
 
     public async Task DeleteAsync(int id)
     {

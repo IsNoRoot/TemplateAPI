@@ -32,7 +32,7 @@ public class UserCreatorService(IUserRepository userRepository, IUnitOfWork unit
                 Password = userToCreate.Password.Value
             };
 
-            return new ResultDto<UserCreateResponseDto>().Success(data);
+            return ResultDto<UserCreateResponseDto>.Success(data);
         }
         catch (DomainException e)
         {

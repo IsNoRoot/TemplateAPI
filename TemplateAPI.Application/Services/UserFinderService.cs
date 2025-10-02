@@ -29,6 +29,6 @@ public class UserFinderService(IUserRepository userRepository) : IUserFinderServ
             Password = response.Password.Value
         };
 
-        return new ResultDto<UserResponseDto>().Success(data);
+        return ResultDto<UserResponseDto>.Success(data);
     }
 }

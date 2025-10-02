@@ -11,7 +11,7 @@ namespace TemplateAPI.Application.Services;
 
 public class UserUpdaterService(IUserRepository userRepository, IUnitOfWork unitOfWork) : IUserUpdaterService
 {
-    public async Task<ResultDto<object>> UpdateAsync(UserUpdateRequestDto user)
+    public async Task<ResultDto> UpdateAsync(UserUpdateRequestDto user)
     {
         try
         {
@@ -35,7 +35,7 @@ public class UserUpdaterService(IUserRepository userRepository, IUnitOfWork unit
             await userRepository.UpdateAsync(userToUpdate);
             await unitOfWork.SaveChangesAsync();
 
-            return new ResultDto<object>().Success();
+            return ResultDto.Success();
         }
         catch (DomainException e)
         {

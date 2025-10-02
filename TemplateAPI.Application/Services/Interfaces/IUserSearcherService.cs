@@ -5,4 +5,6 @@ namespace TemplateAPI.Application.Services.Interfaces;
 public interface IUserSearcherService
 {
     public Task<ResultDto<IEnumerable<UserResponseDto>>> SearchAsync();
+    public Task<ResultDto<(IEnumerable<UserResponseDto>Data,PagingMetadataDto PagingMetadata)>> SearchAsync(PagingParametersDto pagingParameters);
+
 }

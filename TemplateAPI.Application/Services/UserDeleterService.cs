@@ -9,7 +9,7 @@ namespace TemplateAPI.Application.Services;
 
 public class UserDeleterService(IUserRepository userRepository, IUnitOfWork unitOfWork) : IUserDeleterService
 {
-    public async Task<ResultDto<object>> DeleteAsync(int id)
+    public async Task<ResultDto> DeleteAsync(int id)
     {
         var userDb = await userRepository.GetByIdAsync(id);
         if (userDb is null)
@@ -20,6 +20,6 @@ public class UserDeleterService(IUserRepository userRepository, IUnitOfWork unit
         await userRepository.DeleteAsync(id);
         await unitOfWork.SaveChangesAsync();
 
-        return new ResultDto<object>().Success();
+        return ResultDto.Success();
     }
 }
